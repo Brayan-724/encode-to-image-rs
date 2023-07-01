@@ -1,0 +1,8 @@
+/target
+
+# Testing files
+*.xcf
+*.png
+*.jpg
+*.jpeg
+t.txt
