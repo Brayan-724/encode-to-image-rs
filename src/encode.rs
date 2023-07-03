@@ -1,6 +1,8 @@
 use crate::{utils::ToHex, Color};
 
 pub fn encode_bytes(bytes: &[u8], target_color: Color) -> Vec<Color> {
+    let color_bias = Color::WHITE - target_color;
+
     let hex = bytes
         .iter()
         .map(|b| b.to_hex().chars().collect::<Vec<_>>())
@@ -22,10 +24,16 @@ pub fn encode_bytes(bytes: &[u8], target_color: Color) -> Vec<Color> {
         carrier_i += 2;
 
         if carrier_i >= 6 {
-            let pixel_color: String = carrier.iter().collect();
-            let pixel_color = Color::from_hex(pixel_color);
-            let target_color = target_color.clone();
-            out.push(Color::WHITE - pixel_color + target_color.clone());
+            let pixel_hex: String = carrier.iter().collect();
+            let mut pixel_color = Color::from_hex(pixel_hex);
+            pixel_color -= &color_bias;
+            // let mut pixel_color = Color::WHITE;
+            // println!("{pixel_hex}");
+            // pixel_color -= Color::from_hex(pixel_hex);
+            // println!("{pixel_color}");
+            // pixel_color += &target_color;
+            // println!("{pixel_color}");
+            out.push(pixel_color);
             carrier_i = 0;
         }
     }
@@ -34,8 +42,11 @@ pub fn encode_bytes(bytes: &[u8], target_color: Color) -> Vec<Color> {
         let pixel_color = &carrier[0..(carrier_i as usize)];
         let pixel_color: String = pixel_color.iter().collect();
         let pixel_color = format!("{pixel_color:0<6}");
-        let pixel_color = Color::from_hex(pixel_color);
-        out.push(Color::WHITE - pixel_color + target_color);
+        let mut pixel_color = Color::from_hex(pixel_color);
+        pixel_color -= color_bias;
+        // pixel_color -= Color::WHITE;
+        // pixel_color += &target_color;
+        out.push(pixel_color);
     }
 
     out

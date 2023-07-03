@@ -1,10 +1,4 @@
-mod color;
 mod command;
-pub mod decode;
-pub mod encode;
-pub mod image;
-pub mod mask;
-pub mod utils;
 
 use std::{
     fs,
@@ -13,9 +7,8 @@ use std::{
     process,
 };
 
-pub use color::Color;
-
-use crate::command::{command, command_matches};
+use command::{command, command_matches};
+use encode_to_image_rs::{image_encoder, mask_encoder, Color};
 
 fn main() {
     let matches = command().get_matches();
@@ -91,7 +84,7 @@ fn main() {
 
     // Arbitrary size for enable compression
     let data = if data.len() > 10_000 {
-        let data = lzma::compress(&data, 6).unwrap();
+        let data = lzma::compress(&data, 9).unwrap();
         println!("Compressed: {}", data.len());
         data
     } else {
@@ -101,7 +94,7 @@ fn main() {
     let mask = matches.get_one::<PathBuf>("mask");
 
     if let Some(mask) = mask {
-        mask::encode::encode_to_mask(
+        mask_encoder::encode::encode_to_mask(
             &data,
             // Color::new(207, 151, 87),
             target_color,
@@ -111,6 +104,10 @@ fn main() {
             output_path,
         );
     } else {
-        image::encode::encode_to_image(&data, fake_color.unwrap_or(target_color), output_path);
+        image_encoder::encode::encode_to_image(
+            &data,
+            fake_color.unwrap_or(target_color),
+            output_path,
+        );
     }
 }

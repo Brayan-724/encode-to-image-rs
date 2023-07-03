@@ -1,8 +1,8 @@
+use image::Rgba;
 use std::fmt::Display;
 
-use image::Rgba;
-
-use crate::utils::ToHex;
+// use crate::macros::
+use crate::{impl_ops, utils::ToHex};
 
 #[derive(Debug, Clone)]
 pub struct Color(pub u8, pub u8, pub u8, pub u8);
@@ -96,44 +96,35 @@ impl Color {
     }
 }
 
-impl std::ops::Sub for Color {
-    type Output = Color;
+impl_ops!(-(lhs: Color, rhs) -> Color {
+    Color(
+        lhs.0.wrapping_sub(rhs.0),
+        lhs.1.wrapping_sub(rhs.1),
+        lhs.2.wrapping_sub(rhs.2),
+        255,
+    )
+});
 
-    fn sub(self, rhs: Self) -> Self::Output {
-        Color(
-            self.0.wrapping_sub(rhs.0),
-            self.1.wrapping_sub(rhs.1),
-            self.2.wrapping_sub(rhs.2),
-            255
-            // self.3.abs_diff(rhs.3),
-        )
-    }
-}
+impl_ops!(-=(mut lhs: Color, rhs) {
+    lhs.0 = lhs.0.wrapping_sub(rhs.0);
+    lhs.1 = lhs.1.wrapping_sub(rhs.1);
+    lhs.2 = lhs.2.wrapping_sub(rhs.2);
+});
 
-impl std::ops::Sub for &Color {
-    type Output = Color;
+impl_ops!(+(lhs: Color, rhs) -> Color {
+    Color(
+        lhs.0.wrapping_add(rhs.0),
+        lhs.1.wrapping_add(rhs.1),
+        lhs.2.wrapping_add(rhs.2),
+        255
+    )
+});
 
-    fn sub(self, rhs: Self) -> Self::Output {
-        Color(
-            self.0.abs_diff(rhs.0),
-            self.1.abs_diff(rhs.1),
-            self.2.abs_diff(rhs.2),
-            self.3.abs_diff(rhs.3),
-        )
-    }
-}
-impl std::ops::Add for Color {
-    type Output = Self;
-
-    fn add(self, rhs: Self) -> Self::Output {
-        Self(
-            self.0.wrapping_add(rhs.0),
-            self.1.wrapping_add(rhs.1),
-            self.2.wrapping_add(rhs.2),
-            self.3.wrapping_add(rhs.3),
-        )
-    }
-}
+impl_ops!(+=(mut lhs: Color, rhs) {
+    lhs.0 = lhs.0.wrapping_add(rhs.0);
+    lhs.1 = lhs.1.wrapping_add(rhs.1);
+    lhs.2 = lhs.2.wrapping_add(rhs.2);
+});
 
 impl From<String> for Color {
     fn from(value: String) -> Self {
