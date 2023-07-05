@@ -1,4 +1,6 @@
-pub mod decode;
-pub mod encode;
+mod decode;
+mod encode;
+
+pub use encode::encode;
 
 mod common;

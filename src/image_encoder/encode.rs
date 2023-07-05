@@ -4,7 +4,7 @@ use image::RgbaImage;
 
 use crate::{encode::encode_bytes, Color};
 
-pub fn encode_to_image<O>(data: &[u8], target_color: Color, output_path: O)
+pub fn encode<O>(data: &[u8], target_color: Color, output_path: O)
 where
     O: AsRef<Path>,
 {

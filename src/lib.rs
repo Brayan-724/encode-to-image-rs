@@ -1,9 +1,12 @@
 pub mod color;
 pub mod decode;
 pub mod encode;
-pub mod image_encoder;
 pub(crate) mod macros;
-pub mod mask_encoder;
 pub mod utils;
+
+// Encoders
+pub mod chamaleon_encoder;
+pub mod image_encoder;
+pub mod mask_encoder;
 
 pub use color::Color;

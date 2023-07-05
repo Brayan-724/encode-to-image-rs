@@ -25,7 +25,7 @@ pub fn calculate_next_size(
     }
 }
 
-pub fn encode_to_mask<M, O>(
+pub fn encode<M, O>(
     data: &[u8],
     target_color: Color,
     fake_color: Option<Color>,

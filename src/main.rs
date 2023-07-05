@@ -94,7 +94,7 @@ fn main() {
     let mask = matches.get_one::<PathBuf>("mask");
 
     if let Some(mask) = mask {
-        mask_encoder::encode::encode_to_mask(
+        mask_encoder::encode(
             &data,
             // Color::new(207, 151, 87),
             target_color,
@@ -104,10 +104,6 @@ fn main() {
             output_path,
         );
     } else {
-        image_encoder::encode::encode_to_image(
-            &data,
-            fake_color.unwrap_or(target_color),
-            output_path,
-        );
+        image_encoder::encode(&data, fake_color.unwrap_or(target_color), output_path);
     }
 }
