@@ -27,12 +27,6 @@ pub fn encode_bytes(bytes: &[u8], target_color: Color) -> Vec<Color> {
             let pixel_hex: String = carrier.iter().collect();
             let mut pixel_color = Color::from_hex(pixel_hex);
             pixel_color -= &color_bias;
-            // let mut pixel_color = Color::WHITE;
-            // println!("{pixel_hex}");
-            // pixel_color -= Color::from_hex(pixel_hex);
-            // println!("{pixel_color}");
-            // pixel_color += &target_color;
-            // println!("{pixel_color}");
             out.push(pixel_color);
             carrier_i = 0;
         }
@@ -44,8 +38,6 @@ pub fn encode_bytes(bytes: &[u8], target_color: Color) -> Vec<Color> {
         let pixel_color = format!("{pixel_color:0<6}");
         let mut pixel_color = Color::from_hex(pixel_color);
         pixel_color -= color_bias;
-        // pixel_color -= Color::WHITE;
-        // pixel_color += &target_color;
         out.push(pixel_color);
     }
 
