@@ -5,7 +5,7 @@ pub(crate) mod macros;
 pub mod utils;
 
 // Encoders
-pub mod chamaleon_encoder;
+pub mod chameleon_encoder;
 pub mod image_encoder;
 pub mod mask_encoder;
 

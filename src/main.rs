@@ -8,30 +8,31 @@ use std::{
 };
 
 use command::{command, command_matches};
-use encode_to_image_rs::{image_encoder, mask_encoder, Color};
+use encode_to_image_rs::{chameleon_encoder, image_encoder, mask_encoder, Color};
 
 fn main() {
     let matches = command().get_matches();
 
-    let (mut output_path, target_color, fake_color, input_type, overwrite) =
-        command_matches(&matches);
+    let mut command = command_matches(&matches);
 
-    let data: Vec<u8> = match input_type {
+    let data: Vec<u8> = match command.input_type {
         "input" => {
             let input = matches
                 .get_one::<PathBuf>("input")
                 .expect("Group make it required");
 
-            if output_path.to_str().unwrap() == "%INPUT-FILE%.out.png" {
+            if command.output_path.to_str().unwrap() == "%INPUT-FILE%.out.png" {
                 let input_path = input.file_stem().unwrap().to_str().unwrap();
-                output_path.set_file_name(input_path.to_owned() + ".out.png");
+                command
+                    .output_path
+                    .set_file_name(input_path.to_owned() + ".out.png");
             }
 
-            if !overwrite {
-                if let Ok(_) = fs::metadata(&output_path) {
+            if !command.overwrite {
+                if let Ok(_) = fs::metadata(&command.output_path) {
                     print!(
                         "The file \"{}\" already exists.\nDo you want to overwrite it? (Y/n) ",
-                        output_path.display()
+                        command.output_path.display()
                     );
                     std::io::stdout().lock().flush().unwrap();
 
@@ -79,7 +80,7 @@ fn main() {
         _ => unreachable!(),
     };
 
-    println!("Output path: {}", output_path.display());
+    println!("Output path: {}", command.output_path.display());
     println!("Data length: {}", data.len());
 
     // Arbitrary size for enable compression
@@ -91,19 +92,22 @@ fn main() {
         data
     };
 
-    let mask = matches.get_one::<PathBuf>("mask");
-
-    if let Some(mask) = mask {
-        mask_encoder::encode(
-            &data,
-            // Color::new(207, 151, 87),
-            target_color,
-            fake_color,
-            // Some(Color::new(255, 255, 47)),
-            mask,
-            output_path,
-        );
+    if command.chameleon {
+        chameleon_encoder::encode();
     } else {
-        image_encoder::encode(&data, fake_color.unwrap_or(target_color), output_path);
+        let target_color = command.target_color;
+
+        if let Some(mask) = command.mask {
+            mask_encoder::encode(
+                &data,
+                target_color.expect("Mask needs a target color to change."),
+                command.fake_color,
+                mask,
+                command.output_path,
+            );
+        } else {
+            let fake_color = command.fake_color.or(target_color).unwrap_or_default();
+            image_encoder::encode(&data, fake_color, command.output_path);
+        }
     }
 }

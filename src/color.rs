@@ -15,6 +15,12 @@ impl Display for Color {
     }
 }
 
+impl Default for Color {
+    fn default() -> Self {
+        Color::WHITE
+    }
+}
+
 impl Color {
     pub const WHITE: Color = Color(255, 255, 255, 255);
     pub const fn new(r: u8, g: u8, b: u8) -> Color {
